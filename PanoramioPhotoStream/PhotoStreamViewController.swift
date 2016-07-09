@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  PhotoStreamViewController.swift
 //  PanoramioPhotoStream
 //
 //  Created by sean on 09/07/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class PhotoStreamViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
