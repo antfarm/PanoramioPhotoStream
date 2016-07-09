@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1426236E1D313441003A1C9E /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1426236D1D313441003A1C9E /* PhotoCollectionViewCell.swift */; };
+		142623701D31358F003A1C9E /* gt40_rhinluch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1426236F1D31358F003A1C9E /* gt40_rhinluch.jpg */; };
 		1435EDFF1D3123EF001AB2A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */; };
 		1435EE011D3123EF001AB2A7 /* PhotoStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */; };
 		1435EE041D3123EF001AB2A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1435EE021D3123EF001AB2A7 /* Main.storyboard */; };
@@ -34,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1426236D1D313441003A1C9E /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
+		1426236F1D31358F003A1C9E /* gt40_rhinluch.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gt40_rhinluch.jpg; sourceTree = "<group>"; };
 		1435EDFB1D3123EF001AB2A7 /* PanoramioPhotoStream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PanoramioPhotoStream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStreamViewController.swift; sourceTree = "<group>"; };
@@ -99,10 +103,12 @@
 			children = (
 				1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */,
 				1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */,
+				1426236D1D313441003A1C9E /* PhotoCollectionViewCell.swift */,
 				1435EE021D3123EF001AB2A7 /* Main.storyboard */,
 				1435EE051D3123EF001AB2A7 /* Assets.xcassets */,
 				1435EE071D3123EF001AB2A7 /* LaunchScreen.storyboard */,
 				1435EE0A1D3123EF001AB2A7 /* Info.plist */,
+				1426236F1D31358F003A1C9E /* gt40_rhinluch.jpg */,
 			);
 			path = PanoramioPhotoStream;
 			sourceTree = "<group>";
@@ -235,6 +241,7 @@
 				1435EE091D3123EF001AB2A7 /* LaunchScreen.storyboard in Resources */,
 				1435EE061D3123EF001AB2A7 /* Assets.xcassets in Resources */,
 				1435EE041D3123EF001AB2A7 /* Main.storyboard in Resources */,
+				142623701D31358F003A1C9E /* gt40_rhinluch.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +268,7 @@
 			files = (
 				1435EE011D3123EF001AB2A7 /* PhotoStreamViewController.swift in Sources */,
 				1435EDFF1D3123EF001AB2A7 /* AppDelegate.swift in Sources */,
+				1426236E1D313441003A1C9E /* PhotoCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +411,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PanoramioPhotoStream/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = de.antfarm.PanoramioPhotoStream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -414,6 +423,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PanoramioPhotoStream/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = de.antfarm.PanoramioPhotoStream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -485,6 +495,7 @@
 				1435EE251D3123EF001AB2A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1435EE261D3123EF001AB2A7 /* Build configuration list for PBXNativeTarget "PanoramioPhotoStreamTests" */ = {
 			isa = XCConfigurationList;
@@ -493,6 +504,7 @@
 				1435EE281D3123EF001AB2A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1435EE291D3123EF001AB2A7 /* Build configuration list for PBXNativeTarget "PanoramioPhotoStreamUITests" */ = {
 			isa = XCConfigurationList;
@@ -501,6 +513,7 @@
 				1435EE2B1D3123EF001AB2A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Photo Stream View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="PhotoStreamViewController" customModule="PanoramioPhotoStream" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -15,8 +16,78 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Wj1-Tu-wNT">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="I6C-nY-0nM">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="44" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Photo Collection View Cell" id="d8G-HB-unU" customClass="PhotoCollectionViewCell" customModule="PanoramioPhotoStream" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="44" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GBR-oN-kGy">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="GBR-oN-kGy" firstAttribute="top" secondItem="d8G-HB-unU" secondAttribute="top" id="90A-Jz-SQY"/>
+                                            <constraint firstItem="GBR-oN-kGy" firstAttribute="leading" secondItem="d8G-HB-unU" secondAttribute="leading" id="IzG-Oc-T4H"/>
+                                            <constraint firstAttribute="bottom" secondItem="GBR-oN-kGy" secondAttribute="bottom" id="enX-bI-oY9"/>
+                                            <constraint firstAttribute="trailing" secondItem="GBR-oN-kGy" secondAttribute="trailing" id="lUO-um-fzP"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="photoImageView" destination="GBR-oN-kGy" id="hrt-bd-LVV"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aMb-DS-JX2">
+                                <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="tOc-a7-3Wn"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem title="Start" id="eso-Gf-8hU">
+                                        <connections>
+                                            <action selector="startStreaming:" destination="BYZ-38-t0r" id="UL3-sk-ueg"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="FWi-9t-OQM"/>
+                                    <barButtonItem enabled="NO" title="Stop" id="yl0-E9-Ep9">
+                                        <connections>
+                                            <action selector="stopStreaming:" destination="BYZ-38-t0r" id="rjJ-ru-UGj"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Wj1-Tu-wNT" secondAttribute="bottom" id="7Fa-bs-RlR"/>
+                            <constraint firstItem="aMb-DS-JX2" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8hk-k2-ZNc"/>
+                            <constraint firstAttribute="trailing" secondItem="aMb-DS-JX2" secondAttribute="trailing" id="B1q-8W-cAu"/>
+                            <constraint firstItem="Wj1-Tu-wNT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="GQY-kl-ANf"/>
+                            <constraint firstItem="Wj1-Tu-wNT" firstAttribute="top" secondItem="aMb-DS-JX2" secondAttribute="top" id="IMF-o2-aXt"/>
+                            <constraint firstItem="aMb-DS-JX2" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uDG-bQ-OFd"/>
+                            <constraint firstAttribute="trailing" secondItem="Wj1-Tu-wNT" secondAttribute="trailing" id="uag-T6-Ir4"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="photoCollectionView" destination="Wj1-Tu-wNT" id="bvC-f9-g97"/>
+                        <outlet property="startButtonItem" destination="eso-Gf-8hU" id="mFh-KU-QoC"/>
+                        <outlet property="stopButtonItem" destination="yl0-E9-Ep9" id="CFr-cX-t63"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
