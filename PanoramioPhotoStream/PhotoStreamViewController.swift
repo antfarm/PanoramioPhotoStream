@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 
 class PhotoStreamViewController: UIViewController {
@@ -16,10 +17,15 @@ class PhotoStreamViewController: UIViewController {
 
     @IBOutlet var photoCollectionView: UICollectionView!
 
+    var locationManager: CLLocationManager!
 
-    let dummyImage = UIImage(named:"gt40_rhinluch.jpg")!
 
-    
+    private var photos: [UIImage?] = []
+    private var photoLocations: [CLLocation] = []
+
+    private let dummyImage = UIImage(named:"gt40_rhinluch.jpg")!
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -34,6 +40,8 @@ class PhotoStreamViewController: UIViewController {
         stopButtonItem.enabled = true
 
         print("Starting ...")
+
+        locationManager.startUpdatingLocation()
     }
 
 
@@ -43,6 +51,46 @@ class PhotoStreamViewController: UIViewController {
         startButtonItem.enabled = true
 
         print("Stopping ...")
+
+        locationManager.stopUpdatingLocation()
+    }
+
+
+    func addLocation(location: CLLocation) {
+
+        photoLocations.insert(location, atIndex: 0)
+
+        print("Adding Location #\(photoLocations.count)")
+
+        photos.insert(dummyImage, atIndex: 0)
+
+        // TODO: prevent scrolling 
+        photoCollectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
+        //photoCollectionView.reloadData()
+    }
+}
+
+
+extension PhotoStreamViewController: CLLocationManagerDelegate {
+
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+        for location in locations {
+
+            guard photoLocations.count > 0 else {
+                addLocation(location)
+                continue
+            }
+
+            let distanceToLastPhotoLocation = photoLocations.first!.distanceFromLocation(location)
+
+            print("Distance: \(distanceToLastPhotoLocation)")
+
+            if distanceToLastPhotoLocation >= Config.distanceBetweenPhotoLocations {
+                addLocation(location)
+                continue
+            }
+        }
     }
 }
 
@@ -53,7 +101,9 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
 
-        cell.photoImageView.image = dummyImage
+        if let photo = photos[indexPath.row] {
+            cell.photoImageView.image = photo
+        }
 
         return cell
     }
@@ -61,7 +111,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
-        return 10
+        return photoLocations.count
     }
 }
 
@@ -71,13 +121,10 @@ extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
-        let lineSpacing = flowLayout.minimumLineSpacing // set in Interface BUilder
+        let lineSpacing = flowLayout.minimumLineSpacing
 
         let width = collectionView.bounds.width - 2 * lineSpacing
         let height = dummyImage.size.height * (width / dummyImage.size.width)
-
         return CGSize(width: width, height: height)
     }
 }
-
-

@@ -13,5 +13,7 @@ class PhotoCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet var photoImageView: UIImageView!
 
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+
     static let reuseId = "Photo Collection View Cell"
 }

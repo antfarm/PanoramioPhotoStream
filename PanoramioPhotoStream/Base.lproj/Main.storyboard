@@ -37,6 +37,9 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GBR-oN-kGy">
                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                 </imageView>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Z6b-Hb-JU7">
+                                                    <rect key="frame" x="15" y="15" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -44,9 +47,12 @@
                                             <constraint firstItem="GBR-oN-kGy" firstAttribute="top" secondItem="d8G-HB-unU" secondAttribute="top" id="90A-Jz-SQY"/>
                                             <constraint firstItem="GBR-oN-kGy" firstAttribute="leading" secondItem="d8G-HB-unU" secondAttribute="leading" id="IzG-Oc-T4H"/>
                                             <constraint firstAttribute="bottom" secondItem="GBR-oN-kGy" secondAttribute="bottom" id="enX-bI-oY9"/>
+                                            <constraint firstItem="Z6b-Hb-JU7" firstAttribute="centerY" secondItem="d8G-HB-unU" secondAttribute="centerY" id="iW4-Y4-SAd"/>
                                             <constraint firstAttribute="trailing" secondItem="GBR-oN-kGy" secondAttribute="trailing" id="lUO-um-fzP"/>
+                                            <constraint firstItem="Z6b-Hb-JU7" firstAttribute="centerX" secondItem="d8G-HB-unU" secondAttribute="centerX" id="oc9-94-ym4"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="Z6b-Hb-JU7" id="AGG-CT-a04"/>
                                             <outlet property="photoImageView" destination="GBR-oN-kGy" id="hrt-bd-LVV"/>
                                         </connections>
                                     </collectionViewCell>
