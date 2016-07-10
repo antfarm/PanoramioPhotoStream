@@ -67,6 +67,8 @@ class PhotoStreamViewController: UIViewController {
         // TODO: prevent scrolling 
         photoCollectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
         //photoCollectionView.reloadData()
+
+        PanoramioAPIClient().fetchPhotoForLocation(location)
     }
 }
 

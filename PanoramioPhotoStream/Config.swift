@@ -11,5 +11,9 @@ import CoreLocation
 
 struct Config {
 
-    static let distanceBetweenPhotoLocations = CLLocationDistance(10)
+    static let distanceBetweenPhotoLocations = CLLocationDistance(100)
+
+    // http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
+    // static let maximumPhotoLatitudeOffset = CLLocationDistance(10)
+    // static let maximumPhotoLongitudeOffset = CLLocationDistance(10)
 }
