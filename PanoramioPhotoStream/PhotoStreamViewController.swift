@@ -14,23 +14,20 @@ class PhotoStreamViewController: UIViewController {
 
     @IBOutlet var startButtonItem: UIBarButtonItem!
     @IBOutlet var stopButtonItem: UIBarButtonItem!
-
-    @IBOutlet var photoCollectionView: UICollectionView!
+    @IBOutlet var collectionView: UICollectionView!
 
     var locationManager: CLLocationManager!
+    var panoramioClient: PanoramioClient!
+    var photoStream: PhotoStream!
 
-
-    private var photos: [UIImage?] = []
-    private var photoLocations: [CLLocation] = []
-
-    private let dummyImage = UIImage(named:"gt40_rhinluch.jpg")!
+    private var previousPhotoLocation: CLLocation?
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        photoCollectionView.dataSource = self
-        photoCollectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.delegate = self
     }
 
 
@@ -54,23 +51,8 @@ class PhotoStreamViewController: UIViewController {
 
         locationManager.stopUpdatingLocation()
     }
-
-
-    func addLocation(location: CLLocation) {
-
-        photoLocations.insert(location, atIndex: 0)
-
-        print("Adding Location #\(photoLocations.count)")
-
-        photos.insert(dummyImage, atIndex: 0)
-
-        // TODO: prevent scrolling 
-        photoCollectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
-        //photoCollectionView.reloadData()
-
-        PanoramioAPIClient().fetchPhotoForLocation(location)
-    }
 }
+
 
 
 extension PhotoStreamViewController: CLLocationManagerDelegate {
@@ -79,18 +61,76 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
         for location in locations {
 
-            guard photoLocations.count > 0 else {
-                addLocation(location)
+            guard let previousLocation = previousPhotoLocation else {
+
+                previousPhotoLocation = location
+                fetchPhotoForLocation(location)
+
                 continue
             }
 
-            let distanceToLastPhotoLocation = photoLocations.first!.distanceFromLocation(location)
+            let distanceToLastPhotoLocation = location.distanceFromLocation(previousLocation)
 
             print("Distance: \(distanceToLastPhotoLocation)")
 
             if distanceToLastPhotoLocation >= Config.distanceBetweenPhotoLocations {
-                addLocation(location)
-                continue
+
+                previousPhotoLocation = location
+                fetchPhotoForLocation(location)
+            }
+        }
+    }
+
+
+    func fetchPhotoForLocation(location: CLLocation) {
+
+        PanoramioClient().fetchPhotoForLocation(location) { (photo) in
+            print("Photo: \(photo)")
+
+            if let photo = photo {
+
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+
+                    self.photoStream.photos.insert(photo, atIndex: 0)
+
+                    self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
+                    //self.collectionView.reloadData()
+                    //self.collectionView.reloadSections(NSIndexSet(index: 0))
+                }
+            }
+        }
+    }
+}
+
+
+extension PhotoStreamViewController: UICollectionViewDelegate {
+
+    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+
+        var photo = photoStream.photos[indexPath.row]
+
+        print("Fetching image for photo #\(photo.id)")
+
+        photoStream.fetchImageForPhoto(photo) { image in
+
+            photo.image = image
+
+            print ("Done fetching image for photo #\(photo.id): \(image)")
+
+            NSOperationQueue.mainQueue().addOperationWithBlock {
+
+                let index = self.photoStream.photos.indexOf { $0.id == photo.id }
+                let indexPath = NSIndexPath(forRow: index!, inSection: 0)
+
+                if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell {
+
+                    print("Setting image: \(photo.image)")
+                    cell.image = photo.image
+                    cell.backgroundColor = UIColor.redColor()
+                }
+                else {
+                    print("No cell with index \(indexPath)")
+                }
             }
         }
     }
@@ -103,9 +143,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
 
-        if let photo = photos[indexPath.row] {
-            cell.photoImageView.image = photo
-        }
+        cell.image = photoStream.photos[indexPath.row].image
 
         return cell
     }
@@ -113,14 +151,17 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
-        return photoLocations.count
+        return photoStream.photos.count
     }
 }
+
 
 
 extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+
+        let dummyImage = UIImage(named:"gt40_rhinluch.jpg")!
 
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
         let lineSpacing = flowLayout.minimumLineSpacing

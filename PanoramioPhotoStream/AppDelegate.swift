@@ -26,6 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         streamVC.locationManager.allowsBackgroundLocationUpdates = true
         streamVC.locationManager.delegate = streamVC
 
+        streamVC.panoramioClient = PanoramioClient()
+
+        streamVC.photoStream = PhotoStream()
+        
         return true
     }
 

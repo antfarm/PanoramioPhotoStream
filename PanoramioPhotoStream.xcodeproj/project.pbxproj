@@ -11,7 +11,8 @@
 		142623771D3161C2003A1C9E /* gt40_rhinluch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 142623751D3161C2003A1C9E /* gt40_rhinluch.jpg */; };
 		142623781D3161C2003A1C9E /* New York City Marathon.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 142623761D3161C2003A1C9E /* New York City Marathon.gpx */; };
 		1426237A1D316A0C003A1C9E /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142623791D316A0C003A1C9E /* Config.swift */; };
-		1426237E1D319D34003A1C9E /* PanoramioAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1426237D1D319D34003A1C9E /* PanoramioAPI.swift */; };
+		1426237E1D319D34003A1C9E /* PanoramioClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1426237D1D319D34003A1C9E /* PanoramioClient.swift */; };
+		142623821D340EE3003A1C9E /* PhotoStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142623811D340EE3003A1C9E /* PhotoStream.swift */; };
 		1435EDFF1D3123EF001AB2A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */; };
 		1435EE011D3123EF001AB2A7 /* PhotoStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */; };
 		1435EE041D3123EF001AB2A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1435EE021D3123EF001AB2A7 /* Main.storyboard */; };
@@ -43,7 +44,8 @@
 		142623751D3161C2003A1C9E /* gt40_rhinluch.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gt40_rhinluch.jpg; sourceTree = "<group>"; };
 		142623761D3161C2003A1C9E /* New York City Marathon.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "New York City Marathon.gpx"; sourceTree = "<group>"; };
 		142623791D316A0C003A1C9E /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		1426237D1D319D34003A1C9E /* PanoramioAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanoramioAPI.swift; sourceTree = "<group>"; };
+		1426237D1D319D34003A1C9E /* PanoramioClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanoramioClient.swift; sourceTree = "<group>"; };
+		142623811D340EE3003A1C9E /* PhotoStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoStream.swift; sourceTree = "<group>"; };
 		1435EDFB1D3123EF001AB2A7 /* PanoramioPhotoStream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PanoramioPhotoStream.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStreamViewController.swift; sourceTree = "<group>"; };
@@ -110,10 +112,11 @@
 			isa = PBXGroup;
 			children = (
 				1435EDFE1D3123EF001AB2A7 /* AppDelegate.swift */,
-				142623791D316A0C003A1C9E /* Config.swift */,
 				1435EE001D3123EF001AB2A7 /* PhotoStreamViewController.swift */,
 				1426236D1D313441003A1C9E /* PhotoCollectionViewCell.swift */,
-				1426237D1D319D34003A1C9E /* PanoramioAPI.swift */,
+				142623811D340EE3003A1C9E /* PhotoStream.swift */,
+				1426237D1D319D34003A1C9E /* PanoramioClient.swift */,
+				142623791D316A0C003A1C9E /* Config.swift */,
 				1435EE021D3123EF001AB2A7 /* Main.storyboard */,
 				1435EE051D3123EF001AB2A7 /* Assets.xcassets */,
 				1435EE071D3123EF001AB2A7 /* LaunchScreen.storyboard */,
@@ -284,7 +287,8 @@
 				1435EE011D3123EF001AB2A7 /* PhotoStreamViewController.swift in Sources */,
 				1435EDFF1D3123EF001AB2A7 /* AppDelegate.swift in Sources */,
 				1426237A1D316A0C003A1C9E /* Config.swift in Sources */,
-				1426237E1D319D34003A1C9E /* PanoramioAPI.swift in Sources */,
+				1426237E1D319D34003A1C9E /* PanoramioClient.swift in Sources */,
+				142623821D340EE3003A1C9E /* PhotoStream.swift in Sources */,
 				1426236E1D313441003A1C9E /* PhotoCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

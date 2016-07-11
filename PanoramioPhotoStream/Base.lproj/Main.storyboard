@@ -36,7 +36,7 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GBR-oN-kGy">
                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                 </imageView>
-                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Z6b-Hb-JU7">
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Z6b-Hb-JU7">
                                                     <rect key="frame" x="15" y="15" width="20" height="20"/>
                                                 </activityIndicatorView>
                                             </subviews>
@@ -89,7 +89,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="photoCollectionView" destination="Wj1-Tu-wNT" id="bvC-f9-g97"/>
+                        <outlet property="collectionView" destination="Wj1-Tu-wNT" id="ilc-SW-F9x"/>
                         <outlet property="startButtonItem" destination="eso-Gf-8hU" id="mFh-KU-QoC"/>
                         <outlet property="stopButtonItem" destination="yl0-E9-Ep9" id="CFr-cX-t63"/>
                     </connections>
