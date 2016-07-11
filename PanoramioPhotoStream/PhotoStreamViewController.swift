@@ -85,6 +85,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
     func fetchPhotoForLocation(location: CLLocation) {
 
         PanoramioClient().fetchPhotoForLocation(location) { (photo) in
+            
             print("Photo: \(photo)")
 
             if let photo = photo {

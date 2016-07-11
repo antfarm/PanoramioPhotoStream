@@ -62,10 +62,15 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
                 let photos = jsonDict["photos"] as? [[String: AnyObject]],
                 let firstPhoto = photos.first,
                 let id = firstPhoto["photo_id"] as? Int,
-                let imageUrl = firstPhoto["photo_file_url"] as? String {
+                let imageURLString = firstPhoto["photo_file_url"] as? String {
 
                     print(count)
-                    let photo = Photo(id: id, imageUrl: imageUrl, image: nil)
+
+                    let components = NSURLComponents(string: imageURLString)!
+                    let imageURL = components.URL!
+
+                    let photo = Photo(id: id, imageURL: imageURL, image: nil)
+                
                     return photo
             }
         }

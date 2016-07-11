@@ -37,11 +37,11 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     }
 
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        image = nil
-    }
+//    override func awakeFromNib() {
+//        super.awakeFromNib()
+//
+//        image = nil
+//    }
 
 
     override func prepareForReuse() {
