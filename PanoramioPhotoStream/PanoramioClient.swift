@@ -26,7 +26,6 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     func fetchPhotoForLocation(location: CLLocation, completion: (Photo?) -> Void) {
 
         let url = PanoramioClient.photosURLForLocation(location)
-        print("URL: \(url)")
 
         let request = NSURLRequest(URL: url)
         var photo: Photo?
@@ -37,11 +36,10 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
                 photo = self.photoFromJSONData(data)
             }
             else if let requestError = error {
-                print("Error: \(requestError)")
+                print("Error fetching photo data: \(requestError)")
                 photo = nil
             }
             else {
-                print("Error")
                 photo = nil
             }
 

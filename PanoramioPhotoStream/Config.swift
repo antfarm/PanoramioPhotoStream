@@ -7,9 +7,12 @@
 //
 
 import CoreLocation
+import CoreGraphics
 
 
 struct Config {
+
+    static let imageRatio = CGFloat(16) / 10
 
     static let distanceBetweenPhotoLocations = CLLocationDistance(100)
     static let shortDistanceBetweenPhotoLocations = CLLocationDistance(10)

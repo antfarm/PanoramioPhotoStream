@@ -8,17 +8,26 @@
 
 import UIKit
 
-class Photo {
+
+class Photo: CustomStringConvertible {
 
     var id: Int
     var imageURL: NSURL
     var image: UIImage?
+
 
     init(id: Int, imageURL: NSURL, image: UIImage?) {
         
         self.id = id
         self.imageURL = imageURL
         self.image  = image
+    }
+
+
+    var description: String {
+        get {
+            return "Photo (id: \(id), imageURL: \(imageURL), image: \(image)"
+        }
     }
 }
 
@@ -39,16 +48,17 @@ class PhotoStream {
 
     func fetchImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
 
-        print("Fetching image for photo \(photo)")
+        print("Fetching: image for photo #\(photo.id)")
         
         if let image = photo.image {
-            print ("Already have image for photo #\(photo.id) ...")
+
+            print ("Loading from cache: image for photo #\(photo.id)")
 
             completion(image)
             return
         }
 
-        print ("Downloading image for photo #\(photo.id) ...")
+        print ("Downloading: image for photo #\(photo.id)")
 
         let request = NSURLRequest(URL: photo.imageURL)
 

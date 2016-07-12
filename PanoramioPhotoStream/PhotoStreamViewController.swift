@@ -88,23 +88,19 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
         PanoramioClient().fetchPhotoForLocation(location) { (photo) in
             
-            print("Photo: \(photo)")
+            print("Done fetching photo: \(photo)")
 
-            if let photo = photo {
-
-                self.distanceBetweenPhotoLocations = Config.distanceBetweenPhotoLocations
-
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-
-                    self.photoStream.photos.insert(photo, atIndex: 0)
-
-                    self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
-                    //self.collectionView.reloadData()
-                    //self.collectionView.reloadSections(NSIndexSet(index: 0))
-                }
-            }
-            else {
+            guard let photo = photo else {
                 self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
+                return
+            }
+
+            self.distanceBetweenPhotoLocations = Config.distanceBetweenPhotoLocations
+
+            NSOperationQueue.mainQueue().addOperationWithBlock {
+
+                self.photoStream.photos.insert(photo, atIndex: 0)
+                self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
             }
         }
     }
@@ -116,8 +112,6 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
 
         let photo = photoStream.photos[indexPath.row]
-
-        print("Fetching image for photo #\(photo.id)")
 
         photoStream.fetchImageForPhoto(photo) { image in
 
@@ -132,12 +126,8 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
                 if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell {
 
-                    print("Setting image: \(photo.image)")
+                    // TODO: doubles?
                     cell.image = photo.image
-                    cell.backgroundColor = UIColor.redColor()
-                }
-                else {
-                    print("No cell with index \(indexPath)")
                 }
             }
         }
@@ -169,13 +159,12 @@ extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 
-        let dummyImage = UIImage(named:"gt40_rhinluch.jpg")!
-
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
         let lineSpacing = flowLayout.minimumLineSpacing
 
         let width = collectionView.bounds.width - 2 * lineSpacing
-        let height = dummyImage.size.height * (width / dummyImage.size.width)
+        let height = width / Config.imageRatio
+
         return CGSize(width: width, height: height)
     }
 }
