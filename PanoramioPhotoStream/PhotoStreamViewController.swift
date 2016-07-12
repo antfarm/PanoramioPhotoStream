@@ -23,9 +23,13 @@ class PhotoStreamViewController: UIViewController {
     private var previousPhotoLocation: CLLocation?
     private var distanceBetweenPhotoLocations: CLLocationDistance = Config.distanceBetweenPhotoLocations
 
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.delegate = self
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -37,8 +41,6 @@ class PhotoStreamViewController: UIViewController {
         startButtonItem.enabled = false
         stopButtonItem.enabled = true
 
-        print("Starting ...")
-
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
     }
@@ -49,9 +51,13 @@ class PhotoStreamViewController: UIViewController {
         stopButtonItem.enabled = false
         startButtonItem.enabled = true
 
-        print("Stopping ...")
-
         locationManager.stopUpdatingLocation()
+    }
+
+
+    override func didReceiveMemoryWarning() {
+
+        // dispose of cached images
     }
 }
 
@@ -91,6 +97,13 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             print("Done fetching photo: \(photo)")
 
             guard let photo = photo else {
+                print("No photo found, decreasing distance.")
+                self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
+                return
+            }
+
+            guard !self.photoStream.containsPhotoWithPanoramioID(photo.panoramioID) else {
+                print("Photo already exists, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
                 return
             }
@@ -99,7 +112,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
-                self.photoStream.photos.insert(photo, atIndex: 0)
+                self.photoStream.addPhoto(photo)
                 self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
             }
         }
@@ -107,26 +120,23 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 }
 
 
+
 extension PhotoStreamViewController: UICollectionViewDelegate {
 
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
 
-        let photo = photoStream.photos[indexPath.row]
+        let photo = photoStream[indexPath.row]
 
-        photoStream.fetchImageForPhoto(photo) { image in
+        photoStream.fetchImageForPhoto(photo) { _ in
 
-            photo.image = image
-
-            print ("Done fetching image for photo #\(photo.id): \(image)")
+            print ("Done fetching image for photo #\(photo.uuid): \(photo.image)")
 
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
-                let index = self.photoStream.photos.indexOf { $0.id == photo.id }
+                let index = self.photoStream.indexOfPhotoWithUUID(photo.uuid)
                 let indexPath = NSIndexPath(forRow: index!, inSection: 0)
 
                 if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell {
-
-                    // TODO: doubles?
                     cell.image = photo.image
                 }
             }
@@ -135,13 +145,15 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 }
 
 
+
 extension PhotoStreamViewController: UICollectionViewDataSource {
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
 
-        cell.image = photoStream.photos[indexPath.row].image
+        let photo = photoStream[indexPath.row]
+        cell.image = photo.image
 
         return cell
     }
@@ -149,7 +161,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
-        return photoStream.photos.count
+        return photoStream.count
     }
 }
 

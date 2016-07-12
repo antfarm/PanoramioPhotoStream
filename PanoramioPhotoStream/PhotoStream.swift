@@ -11,22 +11,27 @@ import UIKit
 
 class Photo: CustomStringConvertible {
 
-    var id: Int
+    var uuid: String
+
+    var panoramioID: Int
     var imageURL: NSURL
     var image: UIImage?
 
 
-    init(id: Int, imageURL: NSURL, image: UIImage?) {
-        
-        self.id = id
+    init(panoramioID: Int, imageURL: NSURL, image: UIImage? = nil) {
+
+        self.uuid = NSUUID().UUIDString
+
+        self.panoramioID = panoramioID
         self.imageURL = imageURL
         self.image  = image
     }
 
 
     var description: String {
+        
         get {
-            return "Photo (id: \(id), imageURL: \(imageURL), image: \(image)"
+            return "Photo (uuid: \(uuid), panoramioIid: \(panoramioID), imageURL: \(imageURL), image: \(image)"
         }
     }
 }
@@ -34,7 +39,7 @@ class Photo: CustomStringConvertible {
 
 class PhotoStream {
 
-    var photos = [Photo]()
+    private var photos = [Photo]()
 
     private let session: NSURLSession
 
@@ -46,36 +51,79 @@ class PhotoStream {
     }
 
 
+    func addPhoto(photo: Photo) {
+
+        photos.insert(photo, atIndex: 0)
+    }
+
+
+    subscript(index: Int) -> Photo {
+
+        get {
+            return photos[index]
+        }
+    }
+
+
+    var count: Int {
+
+        get {
+            return photos.count
+        }
+    }
+
+
+    func photoWithUUID(uuid: String) -> Photo? {
+
+        guard let index = indexOfPhotoWithUUID(uuid) else {
+            return nil
+        }
+
+        return photos[index]
+    }
+
+
+    func indexOfPhotoWithUUID(uuid: String) -> Int? {
+        
+        return photos.indexOf { $0.uuid == uuid }
+    }
+
+
+    func containsPhotoWithPanoramioID(panoramioID: Int) -> Bool {
+
+        let index = photos.indexOf { $0.panoramioID == panoramioID }
+
+        return index != nil
+    }
+
+
     func fetchImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
 
-        print("Fetching: image for photo #\(photo.id)")
+        print("Fetching: image for photo #\(photo.uuid)")
         
         if let image = photo.image {
 
-            print ("Loading from cache: image for photo #\(photo.id)")
+            print ("Loading image from cache for photo #\(photo.uuid)")
 
             completion(image)
             return
         }
 
-        print ("Downloading: image for photo #\(photo.id)")
+        print ("Downloading image for photo #\(photo.uuid)")
 
         let request = NSURLRequest(URL: photo.imageURL)
 
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
 
-            var image: UIImage? = nil
-
             if let data = data {
-                image = UIImage(data: data)
+                photo.image = UIImage(data: data)
             }
 
-            completion(image)
+            completion(photo.image)
         }
 
         task.resume()
     }
-
 }
 
 

@@ -6,9 +6,8 @@
 //  Copyright © 2016 antfarm. All rights reserved.
 //
 
-import Foundation
+
 import CoreLocation
-import UIKit
 
 
 class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
@@ -25,19 +24,26 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
 
     func fetchPhotoForLocation(location: CLLocation, completion: (Photo?) -> Void) {
 
+        print("Fetching photo for location: \(location)")
+
         let url = PanoramioClient.photosURLForLocation(location)
 
         let request = NSURLRequest(URL: url)
-        var photo: Photo?
 
         let task = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
 
+            var photo: Photo?
+
+            if let requestError = error {
+                print("Error fetching photo data: \(requestError)")
+
+                photo = nil
+                completion(photo)
+                return
+            }
+
             if let data = data {
                 photo = self.photoFromJSONData(data)
-            }
-            else if let requestError = error {
-                print("Error fetching photo data: \(requestError)")
-                photo = nil
             }
             else {
                 photo = nil
@@ -56,18 +62,16 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
             let jsonObject: AnyObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
 
             if  let jsonDict = jsonObject as? [String: AnyObject],
-                let count = jsonDict["count"] as? Int where count > 60,
+                let count = jsonDict["count"] as? Int where count > 0,
                 let photos = jsonDict["photos"] as? [[String: AnyObject]],
                 let firstPhoto = photos.first,
-                let id = firstPhoto["photo_id"] as? Int,
+                let panoramioId = firstPhoto["photo_id"] as? Int,
                 let imageURLString = firstPhoto["photo_file_url"] as? String {
-
-                    print(count)
 
                     let components = NSURLComponents(string: imageURLString)!
                     let imageURL = components.URL!
 
-                    let photo = Photo(id: id, imageURL: imageURL, image: nil)
+                    let photo = Photo(panoramioID: panoramioId, imageURL: imageURL, image: nil)
                 
                     return photo
             }
@@ -116,16 +120,27 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
 
     static func photosURLForLocation(location: CLLocation) -> NSURL {
 
-        let offsetLongitude = CLLocationDegrees(0.001427437) / 2
-        let offsetLatitude = CLLocationDegrees(0.00089832) / 2
+        /*
+            "If your displacements aren't too great (less than a few kilometers) and you're
+             not right at the poles, use the quick and dirty estimate that
+             111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and
+             111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude)."
+         
+            [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
+        */
+
+        let offsetMetres = Config.photoLocationMaxOffsetMetres
+
+        let latitudeOffset = offsetMetres / 111111
+        let longitudeOffset = offsetMetres / (111111 * cos(location.coordinate.latitude * M_PI / 180))
 
         let params = [
-            "minx": String(location.coordinate.longitude - offsetLongitude),
-            "miny": String(location.coordinate.latitude - offsetLatitude),
-            "maxx": String(location.coordinate.longitude + offsetLongitude),
-            "maxy": String(location.coordinate.latitude + offsetLatitude)
+            "minx": String(location.coordinate.longitude - longitudeOffset),
+            "maxx": String(location.coordinate.longitude + longitudeOffset),
+            "miny": String(location.coordinate.latitude - latitudeOffset),
+            "maxy": String(location.coordinate.latitude + latitudeOffset)
         ]
-        
+
         return photosURLWithParams(params)
     }
 }
