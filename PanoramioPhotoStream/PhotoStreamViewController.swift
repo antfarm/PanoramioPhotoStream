@@ -23,6 +23,7 @@ class PhotoStreamViewController: UIViewController {
     private var previousPhotoLocation: CLLocation?
     private var distanceBetweenPhotoLocations: CLLocationDistance = Config.distanceBetweenPhotoLocations
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,6 +39,7 @@ class PhotoStreamViewController: UIViewController {
 
         print("Starting ...")
 
+        locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
     }
 

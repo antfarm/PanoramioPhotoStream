@@ -18,17 +18,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        let streamVC = window?.rootViewController as! PhotoStreamViewController
+        let vc = window?.rootViewController as! PhotoStreamViewController
 
-        streamVC.locationManager = CLLocationManager()
-        streamVC.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        streamVC.locationManager.requestAlwaysAuthorization()
-        streamVC.locationManager.allowsBackgroundLocationUpdates = true
-        streamVC.locationManager.delegate = streamVC
+        vc.locationManager = {
+            let lm = CLLocationManager()
+            lm.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            lm.allowsBackgroundLocationUpdates = true
+            lm.delegate = vc
+            return lm
+        }()
 
-        streamVC.panoramioClient = PanoramioClient()
+        vc.panoramioClient = PanoramioClient()
 
-        streamVC.photoStream = PhotoStream()
+        vc.photoStream = PhotoStream()
         
         return true
     }
