@@ -117,9 +117,9 @@
 				142623811D340EE3003A1C9E /* PhotoStream.swift */,
 				1426237D1D319D34003A1C9E /* PanoramioClient.swift */,
 				142623791D316A0C003A1C9E /* Config.swift */,
+				1435EE071D3123EF001AB2A7 /* LaunchScreen.storyboard */,
 				1435EE021D3123EF001AB2A7 /* Main.storyboard */,
 				1435EE051D3123EF001AB2A7 /* Assets.xcassets */,
-				1435EE071D3123EF001AB2A7 /* LaunchScreen.storyboard */,
 				1435EE0A1D3123EF001AB2A7 /* Info.plist */,
 			);
 			path = PanoramioPhotoStream;
