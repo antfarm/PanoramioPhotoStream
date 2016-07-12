@@ -8,11 +8,18 @@
 
 import UIKit
 
-struct Photo {
+class Photo {
 
     var id: Int
     var imageURL: NSURL
     var image: UIImage?
+
+    init(id: Int, imageURL: NSURL, image: UIImage?) {
+        
+        self.id = id
+        self.imageURL = imageURL
+        self.image  = image
+    }
 }
 
 
@@ -32,6 +39,8 @@ class PhotoStream {
 
     func fetchImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
 
+        print("Fetching image for photo \(photo)")
+        
         if let image = photo.image {
             print ("Already have image for photo #\(photo.id) ...")
 

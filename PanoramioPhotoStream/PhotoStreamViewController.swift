@@ -21,7 +21,7 @@ class PhotoStreamViewController: UIViewController {
     var photoStream: PhotoStream!
 
     private var previousPhotoLocation: CLLocation?
-
+    private var distanceBetweenPhotoLocations: CLLocationDistance = Config.distanceBetweenPhotoLocations
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,7 +73,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             print("Distance: \(distanceToLastPhotoLocation)")
 
-            if distanceToLastPhotoLocation >= Config.distanceBetweenPhotoLocations {
+            if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
 
                 previousPhotoLocation = location
                 fetchPhotoForLocation(location)
@@ -90,6 +90,8 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             if let photo = photo {
 
+                self.distanceBetweenPhotoLocations = Config.distanceBetweenPhotoLocations
+
                 NSOperationQueue.mainQueue().addOperationWithBlock {
 
                     self.photoStream.photos.insert(photo, atIndex: 0)
@@ -98,6 +100,9 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
                     //self.collectionView.reloadData()
                     //self.collectionView.reloadSections(NSIndexSet(index: 0))
                 }
+            }
+            else {
+                self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
             }
         }
     }
@@ -108,7 +113,7 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
 
-        var photo = photoStream.photos[indexPath.row]
+        let photo = photoStream.photos[indexPath.row]
 
         print("Fetching image for photo #\(photo.id)")
 
