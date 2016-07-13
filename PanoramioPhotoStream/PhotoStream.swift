@@ -9,13 +9,12 @@
 import UIKit
 
 
-class Photo: CustomStringConvertible {
+class Photo {
 
     var uuid: String
 
     var panoramioID: Int
     var imageURL: NSURL
-    var image: UIImage?
 
 
     init(panoramioID: Int, imageURL: NSURL, image: UIImage? = nil) {
@@ -24,14 +23,16 @@ class Photo: CustomStringConvertible {
 
         self.panoramioID = panoramioID
         self.imageURL = imageURL
-        self.image  = image
     }
+}
 
+
+extension Photo: CustomStringConvertible {
 
     var description: String {
         
         get {
-            return "Photo (uuid: \(uuid), panoramioIid: \(panoramioID), imageURL: \(imageURL), image: \(image)"
+            return "Photo (uuid: \(uuid), panoramioIid: \(panoramioID)"
         }
     }
 }
@@ -94,35 +95,6 @@ class PhotoStream {
         let index = photos.indexOf { $0.panoramioID == panoramioID }
 
         return index != nil
-    }
-
-
-    func fetchImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
-
-        print("Fetching: image for photo #\(photo.uuid)")
-        
-        if let image = photo.image {
-
-            print ("Loading image from cache for photo #\(photo.uuid)")
-
-            completion(image)
-            return
-        }
-
-        print ("Downloading image for photo #\(photo.uuid)")
-
-        let request = NSURLRequest(URL: photo.imageURL)
-
-        let task = session.dataTaskWithRequest(request) { (data, response, error) in
-
-            if let data = data {
-                photo.image = UIImage(data: data)
-            }
-
-            completion(photo.image)
-        }
-
-        task.resume()
     }
 }
 

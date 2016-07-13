@@ -8,10 +8,18 @@
 
 
 import CoreLocation
+import UIKit
 
 
 class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
 
+    enum ImageSize: String {
+
+        case Medium = "medium"
+        case Original = "original"
+    }
+
+    
     private let session: NSURLSession
 
 
@@ -24,29 +32,22 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
 
     func fetchPhotoForLocation(location: CLLocation, completion: (Photo?) -> Void) {
 
-        print("Fetching photo for location: \(location)")
-
         let url = PanoramioClient.photosURLForLocation(location)
-
         let request = NSURLRequest(URL: url)
 
         let task = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
 
-            var photo: Photo?
+            var photo: Photo? = nil
 
             if let requestError = error {
                 print("Error fetching photo data: \(requestError)")
 
-                photo = nil
                 completion(photo)
                 return
             }
 
             if let data = data {
                 photo = self.photoFromJSONData(data)
-            }
-            else {
-                photo = nil
             }
 
             completion(photo)
@@ -84,7 +85,54 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     }
 
 
+    func downloadImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
+
+        let request = NSURLRequest(URL: photo.imageURL)
+
+        let task = session.dataTaskWithRequest(request) { (data, response, error) in
+
+//            var photo: Photo? = nil
+
+            if let data = data {
+                completion(UIImage(data: data))
+                return
+            }
+
+            completion(nil) // or nothing at all ???
+        }
+        
+        task.resume()
+    }
+
+
     // MARK: URLs
+
+
+    static func photosURLForLocation(location: CLLocation) -> NSURL {
+
+        /*
+         "If your displacements aren't too great (less than a few kilometers) and you're
+         not right at the poles, use the quick and dirty estimate that
+         111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and
+         111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude)."
+
+         [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
+         */
+
+        let offsetMetres = Config.photoLocationMaxOffsetMetres
+
+        let latitudeOffset = offsetMetres / 111111
+        let longitudeOffset = offsetMetres / (111111 * cos(location.coordinate.latitude * M_PI / 180))
+
+        let params = [
+            "minx": String(location.coordinate.longitude - longitudeOffset),
+            "maxx": String(location.coordinate.longitude + longitudeOffset),
+            "miny": String(location.coordinate.latitude - latitudeOffset),
+            "maxy": String(location.coordinate.latitude + latitudeOffset)
+        ]
+
+        return photosURLWithParams(params)
+    }
 
 
     private static let baseURLString = "http://www.panoramio.com/map/get_panoramas.php"
@@ -94,8 +142,8 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
         "from":      "0",
         "to":        "1",
         "set":       "full",
-        "size":      "original",
-        "mapfilter": "false"
+        "mapfilter": "false",
+        "size":      Config.requestedImageSize.rawValue
     ]
 
 
@@ -115,32 +163,5 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
         components.queryItems = queryItems
 
         return components.URL!
-    }
-
-
-    static func photosURLForLocation(location: CLLocation) -> NSURL {
-
-        /*
-            "If your displacements aren't too great (less than a few kilometers) and you're
-             not right at the poles, use the quick and dirty estimate that
-             111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and
-             111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude)."
-         
-            [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
-        */
-
-        let offsetMetres = Config.photoLocationMaxOffsetMetres
-
-        let latitudeOffset = offsetMetres / 111111
-        let longitudeOffset = offsetMetres / (111111 * cos(location.coordinate.latitude * M_PI / 180))
-
-        let params = [
-            "minx": String(location.coordinate.longitude - longitudeOffset),
-            "maxx": String(location.coordinate.longitude + longitudeOffset),
-            "miny": String(location.coordinate.latitude - latitudeOffset),
-            "maxy": String(location.coordinate.latitude + latitudeOffset)
-        ]
-
-        return photosURLWithParams(params)
     }
 }

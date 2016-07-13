@@ -23,7 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         photoStreamViewController.locationManager = CLLocationManager()
         photoStreamViewController.panoramioClient = PanoramioClient()
         photoStreamViewController.photoStream = PhotoStream()
-        
+        photoStreamViewController.imageCache = ImageCache()
+
         return true
     }
 

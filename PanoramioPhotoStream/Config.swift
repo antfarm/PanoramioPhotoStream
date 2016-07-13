@@ -14,8 +14,10 @@ struct Config {
 
     static let imageRatio = CGFloat(16) / 10
 
+    static let requestedImageSize = PanoramioClient.ImageSize.Original
+
     static let distanceBetweenPhotoLocations = CLLocationDistance(100)
-    static let shortDistanceBetweenPhotoLocations = CLLocationDistance(10)
+    static let shortDistanceBetweenPhotoLocations = CLLocationDistance(20)
 
     static let photoLocationMaxOffsetMetres = CLLocationDistance(30)
 }

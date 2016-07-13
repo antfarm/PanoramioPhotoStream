@@ -19,6 +19,7 @@ class PhotoStreamViewController: UIViewController {
     var locationManager: CLLocationManager!
     var panoramioClient: PanoramioClient!
     var photoStream: PhotoStream!
+    var imageCache: ImageCache!
 
     private var previousPhotoLocation: CLLocation?
     private var distanceBetweenPhotoLocations: CLLocationDistance = Config.distanceBetweenPhotoLocations
@@ -53,12 +54,6 @@ class PhotoStreamViewController: UIViewController {
 
         locationManager.stopUpdatingLocation()
     }
-
-
-    override func didReceiveMemoryWarning() {
-
-        // dispose of cached images
-    }
 }
 
 
@@ -81,7 +76,8 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             print("Distance: \(distanceToLastPhotoLocation)")
 
-            if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
+            if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations
+            && distanceToLastPhotoLocation < 1000 { // Problem with simulated location on device
 
                 previousPhotoLocation = location
                 fetchPhotoForLocation(location)
@@ -92,6 +88,8 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
     func fetchPhotoForLocation(location: CLLocation) {
 
+        print("Fetching photo for coordinate: \(location.coordinate)")
+        
         PanoramioClient().fetchPhotoForLocation(location) { (photo) in
             
             print("Done fetching photo: \(photo)")
@@ -127,20 +125,49 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
         let photo = photoStream[indexPath.row]
 
-        photoStream.fetchImageForPhoto(photo) { _ in
+        print("Fetching image for photo #\(photo.uuid)")
 
-            print ("Done fetching image for photo #\(photo.uuid): \(photo.image)")
+        if let storedImage = imageCache.imageForKey(photo.uuid) {
+
+            print("Retrieving stored image for photo #\(photo.uuid)")
+
+            if let cell = cellForPhotoWithUUID(photo.uuid) {
+                cell.image = storedImage
+            }
+
+            return
+        }
+
+        print("Downloading image for photo #\(photo.uuid) ...")
+
+        panoramioClient.downloadImageForPhoto(photo) { image in
+
+            print("Done downloading image for photo #\(photo.uuid): \(image)")
+
+            guard let downloadedImage = image else {
+                return
+            }
+
+            self.imageCache.setImage(downloadedImage, forKey: photo.uuid)
 
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
-                let index = self.photoStream.indexOfPhotoWithUUID(photo.uuid)
-                let indexPath = NSIndexPath(forRow: index!, inSection: 0)
-
-                if let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell {
-                    cell.image = photo.image
+                if let cell = self.cellForPhotoWithUUID(photo.uuid) {
+                    cell.image = downloadedImage
                 }
             }
         }
+    }
+
+
+    private func cellForPhotoWithUUID(uuid: String) -> PhotoCollectionViewCell? {
+
+        let index = photoStream.indexOfPhotoWithUUID(uuid)
+        let indexPath = NSIndexPath(forRow: index!, inSection: 0)
+
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell
+
+        return cell
     }
 }
 
@@ -153,7 +180,9 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
 
         let photo = photoStream[indexPath.row]
-        cell.image = photo.image
+        let image = imageCache.imageForKey(photo.uuid)
+
+        cell.image = image
 
         return cell
     }
