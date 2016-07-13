@@ -67,7 +67,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             guard let previousLocation = previousPhotoLocation else {
 
                 previousPhotoLocation = location
-                fetchPhotoForLocation(location)
+                showPhotoForLocation(location)
 
                 continue
             }
@@ -76,17 +76,22 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             print("Distance: \(distanceToLastPhotoLocation)")
 
-            if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations
-            && distanceToLastPhotoLocation < 1000 { // Problem with simulated location on device
+            if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
+
+//                guard distanceToLastPhotoLocation < 1000 else {
+//                    // Problem with simulated locations on device, the first few locations are
+//                    // alternating between simulated locations and real sensor data -> ignore
+//                    return
+//                }
 
                 previousPhotoLocation = location
-                fetchPhotoForLocation(location)
+                showPhotoForLocation(location)
             }
         }
     }
 
 
-    func fetchPhotoForLocation(location: CLLocation) {
+    func showPhotoForLocation(location: CLLocation) {
 
         print("Fetching photo for coordinate: \(location.coordinate)")
         
@@ -145,6 +150,11 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
             print("Done downloading image for photo #\(photo.uuid): \(image)")
 
             guard let downloadedImage = image else {
+
+                if let cell = self.cellForPhotoWithUUID(photo.uuid) {
+                    cell.image = nil
+                }
+
                 return
             }
 
