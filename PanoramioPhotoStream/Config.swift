@@ -26,6 +26,4 @@ struct Config {
         static let imagesDirName = "images"
         static let jpegCompressionQuality = CGFloat(0.5)
     }
-    
-
 }
