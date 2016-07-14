@@ -40,8 +40,6 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        print("AWAKE FROM NIB")
-
         image = nil
     }
 
