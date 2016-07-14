@@ -91,14 +91,13 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
 
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
 
-//            var photo: Photo? = nil
+            var image: UIImage? = nil
 
             if let data = data {
-                completion(UIImage(data: data))
-                return
+                image = UIImage(data: data)
             }
 
-            completion(nil) // or nothing at all ???
+            completion(image)
         }
         
         task.resume()
@@ -111,12 +110,12 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     static func photosURLForLocation(location: CLLocation) -> NSURL {
 
         /*
-         "If your displacements aren't too great (less than a few kilometers) and you're
-         not right at the poles, use the quick and dirty estimate that
-         111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and
-         111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude)."
+           "If your displacements aren't too great (less than a few kilometers) and you're
+           not right at the poles, use the quick and dirty estimate that
+           111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and
+           111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude)."
 
-         [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
+           [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
          */
 
         let offsetMetres = Config.Panoramio.photoLocationMaxOffsetMetres
