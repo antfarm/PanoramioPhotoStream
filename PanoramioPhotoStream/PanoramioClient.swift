@@ -119,7 +119,7 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
          [http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters]
          */
 
-        let offsetMetres = Config.photoLocationMaxOffsetMetres
+        let offsetMetres = Config.Panoramio.photoLocationMaxOffsetMetres
 
         let latitudeOffset = offsetMetres / 111111
         let longitudeOffset = offsetMetres / (111111 * cos(location.coordinate.latitude * M_PI / 180))
@@ -143,7 +143,7 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
         "to":        "1",
         "set":       "full",
         "mapfilter": "false",
-        "size":      Config.requestedImageSize.rawValue
+        "size":      Config.Panoramio.requestedImageSize.rawValue
     ]
 
 

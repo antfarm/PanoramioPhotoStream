@@ -64,6 +64,21 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
         for location in locations {
 
+//            #if DEBUG
+//
+//            // Simulating location on the device using a GPX file mixes real sensor readings with
+//            // simulated ones for the first few locations, so we ignore the first couple locations ...
+//
+//            struct Counter { static var count = 0 }
+//
+//            guard Counter.count > 5 else {
+//                Counter.count += 1
+//                print("IGNORING LOCATION: \(location.coordinate)")
+//                return
+//            }
+//
+//            #endif
+
             guard let previousLocation = previousPhotoLocation else {
 
                 previousPhotoLocation = location
@@ -77,12 +92,6 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             print("Distance: \(distanceToLastPhotoLocation)")
 
             if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
-
-//                guard distanceToLastPhotoLocation < 1000 else {
-//                    // Problem with simulated locations on device, the first few locations are
-//                    // alternating between simulated locations and real sensor data -> ignore
-//                    return
-//                }
 
                 previousPhotoLocation = location
                 showPhotoForLocation(location)
@@ -117,6 +126,10 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
                 self.photoStream.addPhoto(photo)
                 self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
+
+                // TODO: Downloading the image twice !!!
+                //       Without this, cells don't update properly.
+                self.collectionView.reloadSections(NSIndexSet(index: 0))
             }
         }
     }
@@ -150,6 +163,9 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
             print("Done downloading image for photo #\(photo.uuid): \(image)")
 
             guard let downloadedImage = image else {
+
+                // photoStream.removePhotoWithUUID()
+                // self.collectionView.reloadSections(NSIndexSet(index: 0))
 
                 if let cell = self.cellForPhotoWithUUID(photo.uuid) {
                     cell.image = nil
