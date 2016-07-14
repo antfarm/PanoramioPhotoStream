@@ -79,7 +79,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             guard let previousLocation = previousPhotoLocation else {
 
                 previousPhotoLocation = location
-                showPhotoForLocation(location)
+                fetchPhotoForLocation(location)
 
                 continue
             }
@@ -91,13 +91,13 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
                 
                 previousPhotoLocation = location
-                showPhotoForLocation(location)
+                fetchPhotoForLocation(location)
             }
         }
     }
     
     
-    func showPhotoForLocation(location: CLLocation) {
+    func fetchPhotoForLocation(location: CLLocation) {
 
         print("Fetching photo for coordinate: \(location.coordinate)")
 
