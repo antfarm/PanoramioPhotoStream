@@ -19,10 +19,11 @@ class PhotoStreamViewController: UIViewController {
     var locationManager: CLLocationManager!
     var panoramioClient: PanoramioClient!
     var photoStream: PhotoStream!
-    var imageCache: ImageCache!
+    var imageStore: ImageStore!
+
 
     private var previousPhotoLocation: CLLocation?
-    private var distanceBetweenPhotoLocations: CLLocationDistance = Config.distanceBetweenPhotoLocations
+    private var distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
 
 
     override func viewDidLoad() {
@@ -62,22 +63,18 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-        for location in locations {
+//        #if DEBUG
+//
+//        // Simulating location on the device using a GPX file mixes real sensor readings with
+//        // simulated locations for the first few locations, so we ignore the first few ...
+//
+//        if shouldIgnoreLocation(location) {
+//            return
+//        }
+//
+//        #endif
 
-//            #if DEBUG
-//
-//            // Simulating location on the device using a GPX file mixes real sensor readings with
-//            // simulated ones for the first few locations, so we ignore the first couple locations ...
-//
-//            struct Counter { static var count = 0 }
-//
-//            guard Counter.count > 5 else {
-//                Counter.count += 1
-//                print("IGNORING LOCATION: \(location.coordinate)")
-//                return
-//            }
-//
-//            #endif
+        for location in locations {
 
             guard let previousLocation = previousPhotoLocation else {
 
@@ -92,43 +89,42 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             print("Distance: \(distanceToLastPhotoLocation)")
 
             if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
-
+                
                 previousPhotoLocation = location
                 showPhotoForLocation(location)
             }
         }
     }
-
-
+    
+    
     func showPhotoForLocation(location: CLLocation) {
 
         print("Fetching photo for coordinate: \(location.coordinate)")
-        
+
         PanoramioClient().fetchPhotoForLocation(location) { (photo) in
-            
+
             print("Done fetching photo: \(photo)")
 
             guard let photo = photo else {
                 print("No photo found, decreasing distance.")
-                self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
+                self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
+
                 return
             }
 
             guard !self.photoStream.containsPhotoWithPanoramioID(photo.panoramioID) else {
+
                 print("Photo already exists, decreasing distance.")
-                self.distanceBetweenPhotoLocations = Config.shortDistanceBetweenPhotoLocations
+                self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
+
                 return
             }
 
-            self.distanceBetweenPhotoLocations = Config.distanceBetweenPhotoLocations
+            self.distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
 
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
                 self.photoStream.addPhoto(photo)
-                self.collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: 0, inSection: 0)])
-
-                // TODO: Downloading the image twice !!!
-                //       Without this, cells don't update properly.
                 self.collectionView.reloadSections(NSIndexSet(index: 0))
             }
         }
@@ -145,7 +141,7 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
         print("Fetching image for photo #\(photo.uuid)")
 
-        if let storedImage = imageCache.imageForKey(photo.uuid) {
+        if let storedImage = imageStore.imageForKey(photo.uuid) {
 
             print("Retrieving stored image for photo #\(photo.uuid)")
 
@@ -164,17 +160,13 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
             guard let downloadedImage = image else {
 
-                // photoStream.removePhotoWithUUID()
-                // self.collectionView.reloadSections(NSIndexSet(index: 0))
-
-                if let cell = self.cellForPhotoWithUUID(photo.uuid) {
-                    cell.image = nil
-                }
+                self.photoStream.removePhotoWithUUID(photo.uuid)
+                self.collectionView.reloadSections(NSIndexSet(index: 0))
 
                 return
             }
 
-            self.imageCache.setImage(downloadedImage, forKey: photo.uuid)
+            self.imageStore.setImage(downloadedImage, forKey: photo.uuid)
 
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
@@ -206,7 +198,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
 
         let photo = photoStream[indexPath.row]
-        let image = imageCache.imageForKey(photo.uuid)
+        let image = imageStore.imageForKey(photo.uuid)
 
         cell.image = image
 
@@ -230,8 +222,49 @@ extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
         let lineSpacing = flowLayout.minimumLineSpacing
 
         let width = collectionView.bounds.width - 2 * lineSpacing
-        let height = width / Config.imageRatio
+        let height = width / Config.CollectionView.imageRatio
 
         return CGSize(width: width, height: height)
     }
 }
+
+
+#if DEBUG
+
+    extension PhotoStreamViewController {
+
+        /*
+         Simulating location on the device using a GPX file mixes real sensor readings
+         with simulated ones for the first few locations.
+
+         This method swallows the first n locations.
+         */
+
+        func shouldIgnoreLocation(location: CLLocation) -> Bool {
+
+            let ignoreCount = 5
+
+            struct Counter {
+                static var count = 0
+            }
+
+            guard Counter.count < ignoreCount else {
+                return false
+            }
+
+            Counter.count += 1
+
+            print("Ignoring location # \(Counter.count): \(location.coordinate)")
+
+            if Counter.count == 1 {
+                distanceBetweenPhotoLocations = 0
+            }
+            else if Counter.count == ignoreCount {
+                distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
+            }
+            
+            return true
+        }
+    }
+    
+#endif

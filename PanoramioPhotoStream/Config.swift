@@ -12,10 +12,14 @@ import CoreGraphics
 
 struct Config {
 
-    static let distanceBetweenPhotoLocations = CLLocationDistance(100)
-    static let shortDistanceBetweenPhotoLocations = CLLocationDistance(20)
+    struct Location {
+        static let distanceBetweenPhotoLocations = CLLocationDistance(100)
+        static let shortDistanceBetweenPhotoLocations = CLLocationDistance(20)
+    }
 
-    static let imageRatio = CGFloat(16) / 10
+    struct CollectionView {
+        static let imageRatio = CGFloat(16) / 10
+    }
 
     struct Panoramio {
         static let requestedImageSize = PanoramioClient.ImageSize.Medium

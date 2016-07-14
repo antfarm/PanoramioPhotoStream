@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         photoStreamViewController.locationManager = CLLocationManager()
         photoStreamViewController.panoramioClient = PanoramioClient()
         photoStreamViewController.photoStream = PhotoStream()
-        photoStreamViewController.imageCache = ImageCache()
+        photoStreamViewController.imageStore = ImageStore()
 
         return true
     }
@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
 
-        ImageCache.deleteImageDirectory()
+        ImageStore.deleteImageDirectory()
     }
 }
 

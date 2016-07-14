@@ -45,6 +45,20 @@ class PhotoStream {
     private let session: NSURLSession
 
 
+    var count: Int {
+        get {
+            return photos.count
+        }
+    }
+
+
+    subscript(index: Int) -> Photo {
+        get {
+            return photos[index]
+        }
+    }
+
+
     init() {
 
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -58,18 +72,10 @@ class PhotoStream {
     }
 
 
-    subscript(index: Int) -> Photo {
+    func removePhotoWithUUID(uuid: String) {
 
-        get {
-            return photos[index]
-        }
-    }
-
-
-    var count: Int {
-
-        get {
-            return photos.count
+        if let index = indexOfPhotoWithUUID(uuid) {
+            photos.removeAtIndex(index)
         }
     }
 

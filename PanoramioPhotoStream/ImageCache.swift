@@ -1,5 +1,5 @@
 //
-//  ImageCache.swift
+//  ImageStore.swift
 //  PanoramioPhotoStream
 //
 //  Created by sean on 12/07/16.
@@ -9,7 +9,7 @@
 import UIKit
 
 
-class ImageCache: NSObject {
+class ImageStore: NSObject {
 
     private let cache = NSCache()
 
@@ -17,8 +17,8 @@ class ImageCache: NSObject {
     override init() {
         super.init()
 
-        ImageCache.deleteImageDirectory()
-        ImageCache.createImageDirectory()
+        ImageStore.deleteImageDirectory()
+        ImageStore.createImageDirectory()
 
         cache.delegate = self
     }
@@ -66,7 +66,7 @@ class ImageCache: NSObject {
 
     private static var imageDirectoryExists: Bool {
         get {
-            return fileManager.fileExistsAtPath(ImageCache.imageDirectoryURL.path!)
+            return fileManager.fileExistsAtPath(ImageStore.imageDirectoryURL.path!)
         }
     }
 
@@ -80,7 +80,7 @@ class ImageCache: NSObject {
         print("Creating image directory.")
 
         do {
-            try fileManager.createDirectoryAtURL(ImageCache.imageDirectoryURL, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectoryAtURL(ImageStore.imageDirectoryURL, withIntermediateDirectories: false, attributes: nil)
         }
         catch {
             print("Error creating image directory: \(error)")
@@ -97,7 +97,7 @@ class ImageCache: NSObject {
         print("Deleting image directory.")
 
         do {
-            try fileManager.removeItemAtURL(ImageCache.imageDirectoryURL)
+            try fileManager.removeItemAtURL(ImageStore.imageDirectoryURL)
         }
         catch {
             print("Error deleting image directory: \(error)")
@@ -107,13 +107,13 @@ class ImageCache: NSObject {
 
     private func imageUrlForKey(key: String) -> NSURL {
 
-        return ImageCache.imageDirectoryURL.URLByAppendingPathComponent(key)
+        return ImageStore.imageDirectoryURL.URLByAppendingPathComponent(key)
     }
 }
 
 
 
-extension ImageCache: NSCacheDelegate {
+extension ImageStore: NSCacheDelegate {
 
     func cache(cache: NSCache, willEvictObject obj: AnyObject) {
 
