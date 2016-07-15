@@ -63,17 +63,6 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-//        #if DEBUG
-//
-//        // Simulating location on the device using a GPX file mixes real sensor readings with
-//        // simulated locations for the first few locations, so we ignore the first few ...
-//
-//        if shouldIgnoreLocation(location) {
-//            return
-//        }
-//
-//        #endif
-
         for location in locations {
 
             guard let previousLocation = previousPhotoLocation else {
@@ -106,6 +95,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             print("Done fetching photo: \(photo)")
 
             guard let photo = photo else {
+
                 print("No photo found, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
 
@@ -125,7 +115,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
                 self.photoStream.addPhoto(photo)
-                self.collectionView.reloadSections(NSIndexSet(index: 0))
+                self.collectionView.reloadData()
             }
         }
     }
@@ -160,8 +150,11 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
             guard let downloadedImage = image else {
 
-                self.photoStream.removePhotoWithUUID(photo.uuid)
-                self.collectionView.reloadSections(NSIndexSet(index: 0))
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+
+                    self.photoStream.removePhotoWithUUID(photo.uuid)
+                    self.collectionView.reloadData()
+                }
 
                 return
             }
@@ -227,44 +220,3 @@ extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 }
-
-
-#if DEBUG
-
-    extension PhotoStreamViewController {
-
-        /*
-         Simulating location on the device using a GPX file mixes real sensor readings
-         with simulated ones for the first few locations.
-
-         This method swallows the first n locations.
-         */
-
-        func shouldIgnoreLocation(location: CLLocation) -> Bool {
-
-            let ignoreCount = 5
-
-            struct Counter {
-                static var count = 0
-            }
-
-            guard Counter.count < ignoreCount else {
-                return false
-            }
-
-            Counter.count += 1
-
-            print("Ignoring location # \(Counter.count): \(location.coordinate)")
-
-            if Counter.count == 1 {
-                distanceBetweenPhotoLocations = 0
-            }
-            else if Counter.count == ignoreCount {
-                distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
-            }
-            
-            return true
-        }
-    }
-    
-#endif
