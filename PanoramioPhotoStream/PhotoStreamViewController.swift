@@ -133,7 +133,7 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
             print("Retrieving stored image for photo #\(photo.uuid)")
 
             if let cell = cellForPhotoWithUUID(photo.uuid) {
-                cell.image = storedImage
+                cell.setImage(storedImage)
             }
 
             return
@@ -161,7 +161,7 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
             NSOperationQueue.mainQueue().addOperationWithBlock {
 
                 if let cell = self.cellForPhotoWithUUID(photo.uuid) {
-                    cell.image = downloadedImage
+                    cell.setImage(downloadedImage)
                 }
             }
         }
@@ -190,7 +190,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
         let photo = photoStream[indexPath.row]
         let image = imageStore.imageForKey(photo.uuid)
 
-        cell.image = image
+        cell.setImage(image)
 
         return cell
     }

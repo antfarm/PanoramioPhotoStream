@@ -14,22 +14,15 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     static let reuseId = "Photo Collection View Cell"
 
 
-    var image: UIImage? {
+    func setImage(image: UIImage?) {
 
-        get {
-            return photoImageView.image
+        photoImageView.image = image
+
+        if image == nil {
+            activityIndicator.startAnimating()
         }
-
-        set(image) {
-
-            photoImageView.image = image
-
-            if image == nil {
-                activityIndicator.startAnimating()
-            }
-            else {
-                activityIndicator.stopAnimating()
-            }
+        else {
+            activityIndicator.stopAnimating()
         }
     }
 
@@ -37,13 +30,13 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        image = nil
+        setImage(nil)
     }
 
 
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        image = nil
+        setImage(nil)
     }
 }
