@@ -112,11 +112,11 @@
 		1435EDFD1D3123EF001AB2A7 /* PanoramioPhotoStream */ = {
 			isa = PBXGroup;
 			children = (
+				14406CA31D35CC690083A8F7 /* Configuration */,
 				14406CA01D35CC230083A8F7 /* Controllers */,
 				14406CA11D35CC3E0083A8F7 /* Views */,
 				14406CA21D35CC4C0083A8F7 /* Models */,
 				14A67D551D37BCFB0046B2ED /* Network */,
-				14406CA31D35CC690083A8F7 /* Configuration */,
 				14406CA41D35CC860083A8F7 /* Interface Builder */,
 				1435EE051D3123EF001AB2A7 /* Assets.xcassets */,
 				1435EE0A1D3123EF001AB2A7 /* Info.plist */,
