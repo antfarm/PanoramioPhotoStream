@@ -37,8 +37,7 @@ class ImageStore: NSObject {
             return cachedImage
         }
 
-        if let savedImage = UIImage(contentsOfFile: imageUrlForKey(key).path!) {
-            
+        if let savedImage = UIImage(contentsOfFile: imageUrlForKey(key).path!) {           
             cache.setObject(savedImage, forKey: key)
             return savedImage
         }
