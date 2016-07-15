@@ -2,9 +2,6 @@
 //  PanoramioPhotoStreamTests.swift
 //  PanoramioPhotoStreamTests
 //
-//  Created by sean on 09/07/16.
-//  Copyright © 2016 antfarm. All rights reserved.
-//
 
 import XCTest
 @testable import PanoramioPhotoStream

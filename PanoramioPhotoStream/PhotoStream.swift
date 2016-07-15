@@ -2,9 +2,6 @@
 //  PhotoStream.swift
 //  PanoramioPhotoStream
 //
-//  Created by sean on 11/07/16.
-//  Copyright © 2016 antfarm. All rights reserved.
-//
 
 import UIKit
 
