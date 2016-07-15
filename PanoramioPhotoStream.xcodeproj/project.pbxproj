@@ -19,7 +19,8 @@
 		1435EE091D3123EF001AB2A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1435EE071D3123EF001AB2A7 /* LaunchScreen.storyboard */; };
 		1435EE141D3123EF001AB2A7 /* PanoramioPhotoStreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EE131D3123EF001AB2A7 /* PanoramioPhotoStreamTests.swift */; };
 		1435EE1F1D3123EF001AB2A7 /* PanoramioPhotoStreamUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1435EE1E1D3123EF001AB2A7 /* PanoramioPhotoStreamUITests.swift */; };
-		14406C9F1D357A180083A8F7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14406C9E1D357A180083A8F7 /* ImageCache.swift */; };
+		14406C9F1D357A180083A8F7 /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14406C9E1D357A180083A8F7 /* ImageStore.swift */; };
+		14BCD1F11D38E71000B371C2 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BCD1F01D38E71000B371C2 /* Photo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +59,8 @@
 		1435EE1A1D3123EF001AB2A7 /* PanoramioPhotoStreamUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PanoramioPhotoStreamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1435EE1E1D3123EF001AB2A7 /* PanoramioPhotoStreamUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoramioPhotoStreamUITests.swift; sourceTree = "<group>"; };
 		1435EE201D3123EF001AB2A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		14406C9E1D357A180083A8F7 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		14406C9E1D357A180083A8F7 /* ImageStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
+		14BCD1F01D38E71000B371C2 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,8 +162,9 @@
 		14406CA21D35CC4C0083A8F7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				14BCD1F01D38E71000B371C2 /* Photo.swift */,
 				142623811D340EE3003A1C9E /* PhotoStream.swift */,
-				14406C9E1D357A180083A8F7 /* ImageCache.swift */,
+				14406C9E1D357A180083A8F7 /* ImageStore.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -332,12 +335,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14BCD1F11D38E71000B371C2 /* Photo.swift in Sources */,
 				1435EE011D3123EF001AB2A7 /* PhotoStreamViewController.swift in Sources */,
 				1435EDFF1D3123EF001AB2A7 /* AppDelegate.swift in Sources */,
 				1426237A1D316A0C003A1C9E /* Config.swift in Sources */,
 				1426237E1D319D34003A1C9E /* PanoramioClient.swift in Sources */,
 				142623821D340EE3003A1C9E /* PhotoStream.swift in Sources */,
-				14406C9F1D357A180083A8F7 /* ImageCache.swift in Sources */,
+				14406C9F1D357A180083A8F7 /* ImageStore.swift in Sources */,
 				1426236E1D313441003A1C9E /* PhotoCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
