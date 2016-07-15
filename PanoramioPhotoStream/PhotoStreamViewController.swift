@@ -66,7 +66,6 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
                 previousPhotoLocation = location
                 fetchPhotoForLocation(location)
-
                 continue
             }
 
@@ -95,7 +94,6 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
                 print("No photo found, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
-
                 return
             }
 
@@ -103,7 +101,6 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
                 print("Photo already exists, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
-
                 return
             }
 
