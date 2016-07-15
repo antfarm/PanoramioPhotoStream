@@ -92,6 +92,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             guard let photo = photo else {
 
+                // TODO: New request for larger area around location.
                 print("No photo found, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
                 return
@@ -99,6 +100,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             guard !self.photoStream.containsPhotoWithPanoramioID(photo.panoramioID) else {
 
+                // TODO: Request more than one photo. Try next photo for location.
                 print("Photo already exists, decreasing distance.")
                 self.distanceBetweenPhotoLocations = Config.Location.shortDistanceBetweenPhotoLocations
                 return
