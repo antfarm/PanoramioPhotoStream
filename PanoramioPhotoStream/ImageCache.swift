@@ -26,7 +26,6 @@ class ImageStore: NSObject {
         self.cache.setObject(image, forKey: key)
 
         if let rawData = UIImageJPEGRepresentation(image, Config.ImageStore.jpegCompressionQuality) {
-
             rawData.writeToURL(imageUrlForKey(key), atomically: true)
         }
     }
@@ -35,12 +34,11 @@ class ImageStore: NSObject {
     func imageForKey(key: String) -> UIImage? {
 
         if let cachedImage = cache.objectForKey(key) as! UIImage? {
-
             return cachedImage
         }
 
         if let savedImage = UIImage(contentsOfFile: imageUrlForKey(key).path!) {
-
+            
             cache.setObject(savedImage, forKey: key)
             return savedImage
         }
