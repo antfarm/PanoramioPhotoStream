@@ -16,13 +16,10 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     }
 
     
-    private let session: NSURLSession
-
-
-    init() {
-
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: config)
+    private var session: NSURLSession {
+        get {
+            return NSURLSession.sharedSession()
+        }
     }
 
 
@@ -50,6 +47,8 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
         }
 
         task.resume()
+
+        session.finishTasksAndInvalidate()
     }
 
 

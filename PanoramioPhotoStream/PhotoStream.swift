@@ -10,7 +10,12 @@ class PhotoStream {
 
     private var photos = [Photo]()
 
-    private let session: NSURLSession
+
+    private var session: NSURLSession {
+        get {
+            return NSURLSession.sharedSession()
+        }
+    }
 
 
     var count: Int {
@@ -24,13 +29,6 @@ class PhotoStream {
         get {
             return photos[index]
         }
-    }
-
-
-    init() {
-
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: config)
     }
 
 
