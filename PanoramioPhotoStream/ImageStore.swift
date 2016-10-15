@@ -55,7 +55,7 @@ class ImageStore: NSObject {
 
     private static let imageDirectoryURL = fileManager
         .URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-        .URLByAppendingPathComponent(Config.ImageStore.imagesDirName)
+        .URLByAppendingPathComponent(Config.ImageStore.imagesDirName)!
 
 
     private static var imageDirectoryExists: Bool {
@@ -101,7 +101,7 @@ class ImageStore: NSObject {
 
     private func imageUrlForKey(key: String) -> NSURL {
 
-        return ImageStore.imageDirectoryURL.URLByAppendingPathComponent(key)
+        return ImageStore.imageDirectoryURL.URLByAppendingPathComponent(key)!
     }
 }
 
