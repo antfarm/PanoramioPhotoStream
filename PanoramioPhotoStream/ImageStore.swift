@@ -8,7 +8,7 @@ import UIKit
 
 class ImageStore: NSObject {
 
-    private let cache = NSCache()
+    private let cache = NSCache<NSString, UIImage>()
 
 
     override init() {
@@ -23,22 +23,22 @@ class ImageStore: NSObject {
     
     func setImage(image: UIImage, forKey key: String) {
 
-        self.cache.setObject(image, forKey: key)
+        cache.setObject(image, forKey: key as NSString)
 
         if let rawData = UIImageJPEGRepresentation(image, Config.ImageStore.jpegCompressionQuality) {
-            rawData.writeToURL(imageUrlForKey(key), atomically: true)
+            try! rawData.write(to: imageUrlForKey(key: key), options: [.atomicWrite])
         }
     }
 
     
     func imageForKey(key: String) -> UIImage? {
 
-        if let cachedImage = cache.objectForKey(key) as! UIImage? {
+        if let cachedImage = cache.object(forKey: key as NSString) {
             return cachedImage
         }
 
-        if let savedImage = UIImage(contentsOfFile: imageUrlForKey(key).path!) {           
-            cache.setObject(savedImage, forKey: key)
+        if let savedImage = UIImage(contentsOfFile: imageUrlForKey(key: key).path) {
+            cache.setObject(savedImage, forKey: key as NSString)
             return savedImage
         }
 
@@ -46,21 +46,21 @@ class ImageStore: NSObject {
     }
 
 
-    private static var fileManager: NSFileManager {
+    private static var fileManager: FileManager {
         get {
-            return NSFileManager.defaultManager()
+            return FileManager.default
         }
     }
 
 
     private static let imageDirectoryURL = fileManager
-        .URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-        .URLByAppendingPathComponent(Config.ImageStore.imagesDirName)!
+        .urls(for: .documentDirectory, in: .userDomainMask).first!
+        .appendingPathComponent(Config.ImageStore.imagesDirName)
 
 
     private static var imageDirectoryExists: Bool {
         get {
-            return fileManager.fileExistsAtPath(ImageStore.imageDirectoryURL.path!)
+            return fileManager.fileExists(atPath: ImageStore.imageDirectoryURL.path)
         }
     }
 
@@ -74,7 +74,7 @@ class ImageStore: NSObject {
         print("Creating image directory.")
 
         do {
-            try fileManager.createDirectoryAtURL(ImageStore.imageDirectoryURL, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(at: ImageStore.imageDirectoryURL, withIntermediateDirectories: false, attributes: nil)
         }
         catch {
             print("Error creating image directory: \(error)")
@@ -91,7 +91,7 @@ class ImageStore: NSObject {
         print("Deleting image directory.")
 
         do {
-            try fileManager.removeItemAtURL(ImageStore.imageDirectoryURL)
+            try fileManager.removeItem(at: ImageStore.imageDirectoryURL)
         }
         catch {
             print("Error deleting image directory: \(error)")
@@ -99,9 +99,9 @@ class ImageStore: NSObject {
     }
 
 
-    private func imageUrlForKey(key: String) -> NSURL {
+    private func imageUrlForKey(key: String) -> URL {
 
-        return ImageStore.imageDirectoryURL.URLByAppendingPathComponent(key)!
+        return ImageStore.imageDirectoryURL.appendingPathComponent(key)
     }
 }
 
@@ -109,7 +109,7 @@ class ImageStore: NSObject {
 
 extension ImageStore: NSCacheDelegate {
 
-    func cache(cache: NSCache, willEvictObject obj: AnyObject) {
+    func cache(_ cache: NSCache<AnyObject, AnyObject>, willEvictObject obj: Any) {
 
         let image = obj as! UIImage
         print("Evicting image from cache: \(image)")

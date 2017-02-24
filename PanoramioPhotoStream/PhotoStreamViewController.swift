@@ -19,8 +19,8 @@ class PhotoStreamViewController: UIViewController {
     var imageStore: ImageStore!
 
 
-    private var previousPhotoLocation: CLLocation?
-    private var distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
+    fileprivate var previousPhotoLocation: CLLocation?
+    fileprivate var distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
 
 
     override func viewDidLoad() {
@@ -35,20 +35,20 @@ class PhotoStreamViewController: UIViewController {
     }
 
 
-    @IBAction func startStreaming(sender: UIBarButtonItem) {
+    @IBAction func startStreaming(_ sender: UIBarButtonItem) {
 
-        startButtonItem.enabled = false
-        stopButtonItem.enabled = true
+        startButtonItem.isEnabled = false
+        stopButtonItem.isEnabled = true
 
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
     }
 
 
-    @IBAction func stopStreaming(sender: UIBarButtonItem) {
+    @IBAction func stopStreaming(_ sender: UIBarButtonItem) {
 
-        stopButtonItem.enabled = false
-        startButtonItem.enabled = true
+        stopButtonItem.isEnabled = false
+        startButtonItem.isEnabled = true
 
         locationManager.stopUpdatingLocation()
     }
@@ -58,25 +58,25 @@ class PhotoStreamViewController: UIViewController {
 
 extension PhotoStreamViewController: CLLocationManagerDelegate {
 
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
         for location in locations {
 
             guard let previousLocation = previousPhotoLocation else {
 
                 previousPhotoLocation = location
-                fetchPhotoForLocation(location)
+                fetchPhotoForLocation(location: location)
                 continue
             }
 
-            let distanceToLastPhotoLocation = location.distanceFromLocation(previousLocation)
+            let distanceToLastPhotoLocation = location.distance(from: previousLocation)
 
             print("Distance: \(distanceToLastPhotoLocation)")
 
             if distanceToLastPhotoLocation >= self.distanceBetweenPhotoLocations {
                 
                 previousPhotoLocation = location
-                fetchPhotoForLocation(location)
+                fetchPhotoForLocation(location: location)
             }
         }
     }
@@ -86,7 +86,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
         print("Fetching photo for coordinate: \(location.coordinate)")
 
-        PanoramioClient().fetchPhotoForLocation(location) { (photo) in
+        PanoramioClient().fetchPhotoForLocation(location: location) { (photo) in
 
             print("Done fetching photo: \(photo)")
 
@@ -99,7 +99,7 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
                 return
             }
 
-            guard !self.photoStream.containsPhotoWithPanoramioID(photo.panoramioID) else {
+            guard !self.photoStream.containsPhotoWithPanoramioID(panoramioID: photo.panoramioID) else {
                 // TODO: Always request multiple photos. Try next photo for location.
 
                 print("Photo already exists, decreasing distance.")
@@ -110,9 +110,9 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
             self.distanceBetweenPhotoLocations = Config.Location.distanceBetweenPhotoLocations
 
-            NSOperationQueue.mainQueue().addOperationWithBlock {
+            OperationQueue.main.addOperation {
 
-                self.photoStream.addPhoto(photo)
+                self.photoStream.addPhoto(photo: photo)
                 self.collectionView.reloadData()
             }
         }
@@ -123,18 +123,18 @@ extension PhotoStreamViewController: CLLocationManagerDelegate {
 
 extension PhotoStreamViewController: UICollectionViewDelegate {
 
-    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
 
         let photo = photoStream[indexPath.row]
 
         print("Fetching image for photo #\(photo.uuid)")
 
-        if let storedImage = imageStore.imageForKey(photo.uuid) {
+        if let storedImage = imageStore.imageForKey(key: photo.uuid) {
 
             print("Retrieving stored image for photo #\(photo.uuid)")
 
-            if let cell = cellForPhotoWithUUID(photo.uuid) {
-                cell.setImage(storedImage)
+            if let cell = cellForPhotoWithUUID(uuid: photo.uuid) {
+                cell.setImage(image: storedImage)
             }
 
             return
@@ -142,27 +142,27 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
         print("Downloading image for photo #\(photo.uuid) ...")
 
-        panoramioClient.downloadImageForPhoto(photo) { image in
+        panoramioClient.downloadImageForPhoto(photo: photo) { image in
 
             print("Done downloading image for photo #\(photo.uuid): \(image)")
 
             guard let downloadedImage = image else {
 
-                NSOperationQueue.mainQueue().addOperationWithBlock {
+                OperationQueue.main.addOperation {
 
-                    self.photoStream.removePhotoWithUUID(photo.uuid)
+                    self.photoStream.removePhotoWithUUID(uuid: photo.uuid)
                     self.collectionView.reloadData()
                 }
 
                 return
             }
 
-            self.imageStore.setImage(downloadedImage, forKey: photo.uuid)
+            self.imageStore.setImage(image: downloadedImage, forKey: photo.uuid)
 
-            NSOperationQueue.mainQueue().addOperationWithBlock {
+            OperationQueue.main.addOperation {
 
-                if let cell = self.cellForPhotoWithUUID(photo.uuid) {
-                    cell.setImage(downloadedImage)
+                if let cell = self.cellForPhotoWithUUID(uuid: photo.uuid) {
+                    cell.setImage(image: downloadedImage)
                 }
             }
         }
@@ -171,10 +171,10 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
     private func cellForPhotoWithUUID(uuid: String) -> PhotoCollectionViewCell? {
 
-        let index = photoStream.indexOfPhotoWithUUID(uuid)
-        let indexPath = NSIndexPath(forRow: index!, inSection: 0)
+        let index = photoStream.indexOfPhotoWithUUID(uuid: uuid)
+        let indexPath = IndexPath(row: index!, section: 0)
 
-        let cell = collectionView.cellForItemAtIndexPath(indexPath) as? PhotoCollectionViewCell
+        let cell = collectionView.cellForItem(at: indexPath) as? PhotoCollectionViewCell
 
         return cell
     }
@@ -184,20 +184,20 @@ extension PhotoStreamViewController: UICollectionViewDelegate {
 
 extension PhotoStreamViewController: UICollectionViewDataSource {
 
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(PhotoCollectionViewCell.reuseId, forIndexPath: indexPath) as! PhotoCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.reuseId, for: indexPath) as! PhotoCollectionViewCell
 
         let photo = photoStream[indexPath.row]
-        let image = imageStore.imageForKey(photo.uuid)
+        let image = imageStore.imageForKey(key: photo.uuid)
 
-        cell.setImage(image)
+        cell.setImage(image: image)
 
         return cell
     }
 
 
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
         return photoStream.count
     }
@@ -207,7 +207,7 @@ extension PhotoStreamViewController: UICollectionViewDataSource {
 
 extension PhotoStreamViewController: UICollectionViewDelegateFlowLayout {
 
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
         let lineSpacing = flowLayout.minimumLineSpacing

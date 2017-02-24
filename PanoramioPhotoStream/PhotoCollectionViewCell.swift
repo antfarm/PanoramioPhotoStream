@@ -30,13 +30,13 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        setImage(nil)
+        setImage(image: nil)
     }
 
 
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        setImage(nil)
+        setImage(image: nil)
     }
 }

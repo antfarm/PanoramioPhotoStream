@@ -11,9 +11,9 @@ class PhotoStream {
     private var photos = [Photo]()
 
 
-    private var session: NSURLSession {
+    private var session: URLSession {
         get {
-            return NSURLSession.sharedSession()
+            return URLSession.shared
         }
     }
 
@@ -34,21 +34,21 @@ class PhotoStream {
 
     func addPhoto(photo: Photo) {
 
-        photos.insert(photo, atIndex: 0)
+        photos.insert(photo, at: 0)
     }
 
 
     func removePhotoWithUUID(uuid: String) {
 
-        if let index = indexOfPhotoWithUUID(uuid) {
-            photos.removeAtIndex(index)
+        if let index = indexOfPhotoWithUUID(uuid: uuid) {
+            photos.remove(at: index)
         }
     }
 
 
     func photoWithUUID(uuid: String) -> Photo? {
 
-        guard let index = indexOfPhotoWithUUID(uuid) else {
+        guard let index = indexOfPhotoWithUUID(uuid: uuid) else {
             return nil
         }
 
@@ -58,13 +58,13 @@ class PhotoStream {
 
     func indexOfPhotoWithUUID(uuid: String) -> Int? {
         
-        return photos.indexOf { $0.uuid == uuid }
+        return photos.index { $0.uuid == uuid }
     }
 
 
     func containsPhotoWithPanoramioID(panoramioID: Int) -> Bool {
 
-        let index = photos.indexOf { $0.panoramioID == panoramioID }
+        let index = photos.index { $0.panoramioID == panoramioID }
 
         return index != nil
     }
