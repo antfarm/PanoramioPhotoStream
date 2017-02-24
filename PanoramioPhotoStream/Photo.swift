@@ -12,12 +12,12 @@ class Photo {
     var uuid: String
 
     var panoramioID: Int
-    var imageURL: NSURL
+    var imageURL: URL
 
 
-    init(panoramioID: Int, imageURL: NSURL, image: UIImage? = nil) {
+    init(panoramioID: Int, imageURL: URL, image: UIImage? = nil) {
 
-        self.uuid = NSUUID().UUIDString
+        self.uuid = UUID().uuidString
 
         self.panoramioID = panoramioID
         self.imageURL = imageURL

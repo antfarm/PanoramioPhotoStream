@@ -16,19 +16,19 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     }
 
     
-    private var session: NSURLSession {
+    private var session: URLSession {
         get {
-            return NSURLSession.sharedSession()
+            return URLSession.shared
         }
     }
 
 
-    func fetchPhotoForLocation(location: CLLocation, completion: (Photo?) -> Void) {
+    func fetchPhotoForLocation(location: CLLocation, completion: @escaping (Photo?) -> Void) {
 
-        let url = PanoramioClient.photosURLForLocation(location)
-        let request = NSURLRequest(URL: url)
+        let url = PanoramioClient.photosURLForLocation(location: location)
+        let request = URLRequest(url: url)
 
-        let task = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+        let task = session.dataTask(with: request) { (data, response, error) -> Void in
 
             var photo: Photo? = nil
 
@@ -40,7 +40,7 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
             }
 
             if let data = data {
-                photo = self.photoFromJSONData(data)
+                photo = self.photoFromJSONData(data: data)
             }
 
             completion(photo)
@@ -50,20 +50,20 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     }
 
 
-    private func photoFromJSONData(data: NSData) -> Photo? {
+    private func photoFromJSONData(data: Data) -> Photo? {
 
         do {
-            let jsonObject: AnyObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+            let jsonObject: Any = try JSONSerialization.jsonObject(with: data, options: [])
 
             if  let jsonDict = jsonObject as? [String: AnyObject],
-                let count = jsonDict["count"] as? Int where count > 0,
+                let count = jsonDict["count"] as? Int, count > 0,
                 let photos = jsonDict["photos"] as? [[String: AnyObject]],
                 let firstPhoto = photos.first,
                 let panoramioId = firstPhoto["photo_id"] as? Int,
                 let imageURLString = firstPhoto["photo_file_url"] as? String {
 
-                    let components = NSURLComponents(string: imageURLString)!
-                    let imageURL = components.URL!
+                    let components = URLComponents(string: imageURLString)!
+                    let imageURL = components.url!
 
                     let photo = Photo(panoramioID: panoramioId, imageURL: imageURL, image: nil)
                 
@@ -78,11 +78,11 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     }
 
 
-    func downloadImageForPhoto(photo: Photo, completion: (UIImage?) -> ()) {
+    func downloadImageForPhoto(photo: Photo, completion: @escaping (UIImage?) -> ()) {
 
-        let request = NSURLRequest(URL: photo.imageURL)
+        let request = URLRequest(url: photo.imageURL)
 
-        let task = session.dataTaskWithRequest(request) { (data, response, error) in
+        let task = session.dataTask(with: request) { (data, response, error) in
 
             var image: UIImage? = nil
 
@@ -100,7 +100,7 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     // MARK: URLs
 
 
-    static func photosURLForLocation(location: CLLocation) -> NSURL {
+    static func photosURLForLocation(location: CLLocation) -> URL {
 
         /*
            "If your displacements aren't too great (less than a few kilometers) and you're
@@ -123,7 +123,7 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
             "maxy": String(location.coordinate.latitude + latitudeOffset)
         ]
 
-        return photosURLWithParams(params)
+        return photosURLWithParams(parameters: params)
     }
 
 
@@ -139,21 +139,21 @@ class PanoramioClient { // cf. http://www.panoramio.com/api/data/api.html
     ]
 
 
-    private static func photosURLWithParams(parameters: [String: String]) -> NSURL {
+    private static func photosURLWithParams(parameters: [String: String]) -> URL {
 
-        var queryItems = [NSURLQueryItem]()
+        var queryItems = [URLQueryItem]()
 
         for (key, value) in baseParams {
-            queryItems.append(NSURLQueryItem(name: key, value: value))
+            queryItems.append(URLQueryItem(name: key, value: value))
         }
 
         for (key, value) in parameters {
-            queryItems.append(NSURLQueryItem(name: key, value: value))
+            queryItems.append(URLQueryItem(name: key, value: value))
         }
 
-        let components = NSURLComponents(string: baseURLString)!
+        var components = URLComponents(string: baseURLString)!
         components.queryItems = queryItems
 
-        return components.URL!
+        return components.url!
     }
 }
